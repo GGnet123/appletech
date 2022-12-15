@@ -1,0 +1,57 @@
+version: '3'
+services:
+  nginx:
+    build:
+      context: ./
+      dockerfile: docker/nginx.docker
+    ports:
+      - "${NGINX_PORT}:8080"
+    links:
+      - php-fpm
+    volumes:
+      - ./docker/logs/nginx:/var/log/nginx
+      - ./:/var/www:cached
+  php-fpm:
+    build:
+      context: ./
+      dockerfile: docker/php-fpm.docker
+    links:
+      - postgres
+    volumes:
+      - ./:/var/www:cached
+    environment:
+      - "POSTGRES_USER=${POSTGRES_USER}"
+      - "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
+      - "POSTGRES_DB=${POSTGRES_DB}"
+      - "REDIS_HOST=${REDIS_HOST}"
+      - "REDIS_PORT=${REDIS_PORT}"
+  php-cli:
+    build:
+      context: ./
+      dockerfile: docker/php-cli.docker
+    volumes:
+      - ./:/var/www:cached
+    environment:
+      - "POSTGRES_USER=${POSTGRES_USER}"
+      - "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
+      - "POSTGRES_DB=${POSTGRES_DB}"
+      - "REDIS_HOST=${REDIS_HOST}"
+      - "REDIS_PORT=${REDIS_PORT}"
+    links:
+      - postgres
+    working_dir: /var/www
+    tty: true
+  postgres:
+    image: postgres:11
+    volumes:
+      - yc_postgres_database:/var/lib/postgresql/data:Z
+    environment:
+      - "POSTGRES_USER=${POSTGRES_USER}"
+      - "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
+      - "POSTGRES_DB=${POSTGRES_DB}"
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT}:5432"
+    tty: true
+volumes:
+  yc_postgres_database:
+    external: true
