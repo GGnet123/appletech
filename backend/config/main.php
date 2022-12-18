@@ -48,14 +48,14 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                'GET api/products' => 'products/get',
-                'GET api/product/<id:\d+>' => 'products/get',
-                'GET api/product/brand/<name>' => 'products/brand',
-                'POST api/product/create' => 'products/create',
-                'PATCH api/product/update/<id:\d+>' => 'products/update',
+                'GET,OPTIONS api/products' => 'products/get',
+                'GET,OPTIONS api/product/<id:\d+>' => 'products/get',
+                'GET,OPTIONS api/product/brand/<name>' => 'products/brand',
+                'POST,OPTIONS api/product/create' => 'products/create',
+                'PATCH,OPTIONS api/product/update/<id:\d+>' => 'products/update',
 
-                'POST api/auth/login' => 'auth/login',
-                'POST api/auth/register' => 'auth/register',
+                'POST,OPTIONS api/auth/login' => 'auth/login',
+                'POST,OPTIONS api/auth/register' => 'auth/register',
             ],
         ],
 

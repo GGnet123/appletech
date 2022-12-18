@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\ProductForm;
 use backend\models\Products;
+use common\models\Products as CommonProducts;
 
 /**
  * Site controller
@@ -28,7 +29,7 @@ class ProductsController extends Controller
         if ($id) {
             return Products::findOne($id);
         }
-        return Products::find()->all();
+        return Products::find()->orderBy('id')->all();
     }
 
     public function actionCreate()
@@ -36,9 +37,11 @@ class ProductsController extends Controller
         $product = new ProductForm();
         $product->attributes = \Yii::$app->request->post();
         if ($product->validate()) {
+            list($success, $newProduct) = $product->save();
             return [
-                'success' => $product->save(),
-                'error' => $product->errors
+                'success' => $success,
+                'errors' => $product->errors,
+                'product' => $newProduct
             ];
         }
         return ['success' => false, 'errors' => $product->errors];
@@ -59,8 +62,26 @@ class ProductsController extends Controller
         return ['success' => false, 'errors' => $product->errors];
     }
 
+    /**
+     * @throws \yii\db\Exception
+     */
     public function actionBrand($name)
     {
-        return Products::find()->where(['category_name' => $name])->all();
+        $name = mb_strtolower($name);
+        $priceAttr = in_array($name, Products::$specialBrands) ? 'rrp_price' : 'price';
+        $commonSql = "select *
+                    from products
+                    where lower(brand_name) = :name
+                      and status = 1
+                    order by {$priceAttr}";
+        $mainSql = "with minProduct as ({$commonSql} asc limit 1),
+        maxProduct as ({$commonSql} desc limit 1)
+        select json_build_object('min', minProduct.*, 'max', maxProduct.*) as products
+        from minProduct, maxProduct";
+        if ($result = \Yii::$app->getDb()->createCommand($mainSql, [':name' => $name])->queryOne()) {
+            $products = json_decode($result['products']);
+            return $products->min->id == $products->max->id ? [new Products($products->min)] : [new Products($products->min), new Products($products->max)];
+        }
+        return [];
     }
 }

@@ -4,7 +4,6 @@ namespace backend\models;
 
 class Products extends \common\models\Products
 {
-    private $specialCategories = ['dell', 'lenovo'];
     public function fields()
     {
         return [
@@ -13,13 +12,11 @@ class Products extends \common\models\Products
             'category_name',
             'brand_name',
             'price' => function() {
-                return in_array(mb_strtolower($this->brand_name), $this->specialCategories) ? $this->rrp_price : $this->price;
+                return in_array(mb_strtolower($this->brand_name), self::$specialBrands) ? $this->rrp_price : $this->price;
             },
-            'status' => function() {
+            'status',
+            'status_name'  => function() {
                 return Products::$statuses[$this->status];
-            },
-            'status_code' => function() {
-                return $this->status;
             }
         ];
     }

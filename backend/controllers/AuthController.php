@@ -4,7 +4,7 @@ namespace backend\controllers;
 
 use common\models\LoginForm;
 use common\models\User;
-use frontend\models\SignupForm;
+use backend\models\SignupForm;
 use yii\web\Response;
 
 class AuthController extends Controller

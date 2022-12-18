@@ -19,8 +19,8 @@ class Products extends \yii\db\ActiveRecord
 {
     const STATUS_AVAILABLE = 1;
     const STATUS_FOR_ORDER = 2;
-
-    public static $statuses = [
+    public static array $specialBrands = ['dell', 'lenovo'];
+    public static array $statuses = [
         self::STATUS_AVAILABLE => 'В наличии',
         self::STATUS_FOR_ORDER => 'Под заказ',
     ];
@@ -30,7 +30,7 @@ class Products extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'admin.products';
+        return 'products';
     }
 
     /**
@@ -41,7 +41,7 @@ class Products extends \yii\db\ActiveRecord
         return [
             [['name', 'category_name', 'brand_name', 'status'], 'required'],
             [['price', 'rrp_price'], 'default', 'value' => 0],
-            [['price', 'rrp_price', 'status'], 'integer'],
+            [['price', 'rrp_price', 'status'], 'integer', 'min' => 0],
             ['status', 'in', 'range' => [Products::STATUS_AVAILABLE, Products::STATUS_FOR_ORDER]],
             [['name', 'category_name', 'brand_name'], 'string'],
         ];
