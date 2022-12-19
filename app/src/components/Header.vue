@@ -1,9 +1,9 @@
 <template>
   <div class="header">
     <a href="/">Home</a>
-    <a href="/login">Login</a>
-    <a href="/signup">Sign Up</a>
-    <a href="#" v-on:click="logout">Log out</a>
+    <a v-if="store.isGuest" href="/login">Login</a>
+    <a v-if="store.isGuest" href="/signup">Sign Up</a>
+    <a v-if="!store.isGuest" href="#" v-on:click="logout">Log out</a>
   </div>
 </template>
 
@@ -28,12 +28,18 @@
 </style>
 
 <script>
+import {store} from '@/utils/store';
 export default {
   name: 'HeaderComponent',
+  data() {
+    return {
+      store
+    }
+  },
   methods: {
     logout() {
+      store.isGuest = true
       localStorage.removeItem('auth_key')
-      this.$router.push({name: 'Login'})
     }
   }
 }

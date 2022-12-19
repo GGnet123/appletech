@@ -58,9 +58,9 @@
 </style>
 
 <script>
-import axios from "axios";
 import Product from "@/components/Product"
 import Create from "@/components/Create"
+import {VueElement} from "vue";
 export default {
   name: 'HomeComponent',
   components: {
@@ -85,20 +85,22 @@ export default {
       this.$router.push({name: 'Update', params: {id: id}})
     },
     async getBrandProducts() {
-      let getProducts = await axios.get('http://localhost:88/api/product/brand/'+this.brand_name)
+      let getProducts = await VueElement.prototype.$request.call('get','/api/product/brand/'+this.brand_name)
+      this.product_id = null
       this.products = getProducts.data
     },
     async getProducts() {
-      let getProducts = await axios.get('http://localhost:88/api/products')
+      let getProducts = await VueElement.prototype.$request.call('get', '/api/products')
       this.products = getProducts.data
     },
     async getProduct() {
       if (this.product_id > 0) {
-        let getProduct = await axios.get('http://localhost:88/api/product/'+this.product_id)
+        let getProduct = await VueElement.prototype.$request.call('get','/api/product/'+this.product_id)
         this.products = getProduct.data ? [getProduct.data] : []
       } else {
         this.products = []
       }
+      this.brand_name = ''
     },
   },
   async mounted() {

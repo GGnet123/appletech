@@ -11,7 +11,7 @@
         {{value}}
       </p>
     </div>
-    <input type="text" v-model="password" placeholder="password">
+    <input type="password" v-model="password" placeholder="password">
     <div class="error" v-if="errors.password">
       <p v-for="(value, key) in errors.password" :key="key">
         {{value}}
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import {VueElement} from "vue";
 export default {
   name: 'SignUp',
   data() {
@@ -38,7 +38,7 @@ export default {
   },
   methods: {
     async signUp() {
-      let res = await axios.post("http://localhost:88/api/auth/register", {
+      let res = await VueElement.prototype.$request.call('post',"/api/auth/register", {
         username: this.username,
         password: this.password
       })

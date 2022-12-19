@@ -43,7 +43,7 @@
 </style>
 
 <script>
-import axios from "axios";
+import {VueElement} from "vue";
 
 export default {
   name: 'UpdateProduct',
@@ -66,20 +66,15 @@ export default {
   },
   methods: {
     async getProduct() {
-      let request = await axios.get('http://localhost:88/api/product/'+this.Product.id)
+      let request = await VueElement.prototype.$request.call('get','/api/product/'+this.Product.id)
       this.Product = request.data
     },
     async saveForm() {
-      let auth_key = localStorage.getItem('auth_key')
-      if (!auth_key) {
-        this.$router.push({name: 'Login'})
-        return
-      }
-      let request = await axios.patch('http://localhost:88/api/product/update/'+ this.Product.id, this.Product, {
-        headers: {
-          Authorization: "Bearer " + auth_key
-        }
-      })
+      let request = await VueElement.prototype.$request.call(
+          'patch',
+          '/api/product/update/'+ this.Product.id,
+          this.Product
+      )
       if (request.data.success) {
         alert('Success')
         this.$router.push({name: 'Home'})

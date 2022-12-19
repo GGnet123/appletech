@@ -35,7 +35,7 @@
 </style>
 
 <script>
-import axios from "axios";
+import {VueElement} from "vue";
 
 export default {
   name: 'CreateProduct',
@@ -52,18 +52,12 @@ export default {
   },
   methods: {
     async saveForm() {
-      let auth_key = localStorage.getItem('auth_key')
-      if (!auth_key) {
-        this.$router.push({name: 'Login'})
-        return
-      }
-      let request = await axios.post('http://localhost:88/api/product/create', this.Product, {
-        headers: {
-          Authorization: "Bearer " + auth_key
-        }
-      })
+      let request = await VueElement.prototype.$request.call(
+          'post',
+          '/api/product/create',
+          this.Product,
+      )
       if (request.data.success) {
-        console.log(request)
         this.$emit('newProduct', request.data.product)
       }
     }

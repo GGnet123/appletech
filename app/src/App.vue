@@ -1,14 +1,23 @@
 <template>
   <Header></Header>
+  <Loader :visible="store.showLoader"></Loader>
   <router-view></router-view>
 </template>
 
 <script>
 import Header from "@/components/Header";
+import Loader from "@/components/Loader";
+import {store} from "@/utils/store";
 export default {
   name: 'App',
   components: {
-    Header
+    Header,
+    Loader
+  },
+  data() {
+    return {
+      store
+    }
   }
 }
 </script>
