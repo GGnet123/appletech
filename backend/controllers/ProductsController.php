@@ -80,7 +80,7 @@ class ProductsController extends Controller
         from minProduct, maxProduct";
         if ($result = \Yii::$app->getDb()->createCommand($mainSql, [':name' => $name])->queryOne()) {
             $products = json_decode($result['products']);
-            return $products->min->id == $products->max->id ? [new Products($products->min)] : [new Products($products->min), new Products($products->max)];
+            return $products->min->idr == $products->max->id ? [new Products($products->min)] : [new Products($products->min), new Products($products->max)];
         }
         return [];
     }
